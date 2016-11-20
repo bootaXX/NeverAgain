@@ -2,6 +2,9 @@ package com.djmaraat.apps.neveragain;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -62,6 +65,8 @@ public class ItemListActivity extends AppCompatActivity {
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(documentItemArrayList));
+        RecyclerView.ItemDecoration dividerItemDecoration = new DividerItemDecoration(getResources().getDrawable(R.drawable.line_divider));
+        recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
     public class SimpleItemRecyclerViewAdapter
@@ -83,7 +88,7 @@ public class ItemListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).id);
+            holder.mIdView.setText(mValues.get(position).title);
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 holder.mContentView.setText(Html.fromHtml(mValues.get(position).details, Html.FROM_HTML_MODE_LEGACY));
             } else {
@@ -125,13 +130,52 @@ public class ItemListActivity extends AppCompatActivity {
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mIdView = (TextView) view.findViewById(R.id.id);
+                mIdView = (TextView) view.findViewById(R.id.title);
                 mContentView = (TextView) view.findViewById(R.id.content);
             }
 
             @Override
             public String toString() {
                 return super.toString() + " '" + mContentView.getText() + "'";
+            }
+        }
+    }
+
+    public class DividerItemDecoration extends RecyclerView.ItemDecoration {
+
+        private Drawable mDivider;
+
+        public DividerItemDecoration(Drawable divider) {
+            mDivider = divider;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            super.getItemOffsets(outRect, view, parent, state);
+
+            if (parent.getChildAdapterPosition(view) == 0) {
+                return;
+            }
+
+            outRect.top = mDivider.getIntrinsicHeight();
+        }
+
+        @Override
+        public void onDraw(Canvas canvas, RecyclerView parent, RecyclerView.State state) {
+            int dividerLeft = parent.getPaddingLeft();
+            int dividerRight = parent.getWidth() - parent.getPaddingRight();
+
+            int childCount = parent.getChildCount();
+            for (int i = 0; i < childCount - 1; i++) {
+                View child = parent.getChildAt(i);
+
+                RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
+
+                int dividerTop = child.getBottom() + params.bottomMargin;
+                int dividerBottom = dividerTop + mDivider.getIntrinsicHeight();
+
+                mDivider.setBounds(dividerLeft, dividerTop, dividerRight, dividerBottom);
+                mDivider.draw(canvas);
             }
         }
     }
