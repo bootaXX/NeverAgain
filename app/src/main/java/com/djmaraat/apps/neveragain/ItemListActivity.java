@@ -2,9 +2,11 @@ package com.djmaraat.apps.neveragain;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +15,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -88,12 +91,14 @@ public class ItemListActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).title);
+            holder.mTitleView.setText(mValues.get(position).title);
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                holder.mContentView.setText(Html.fromHtml(mValues.get(position).details, Html.FROM_HTML_MODE_LEGACY));
+                holder.mContentView.setText(Html.fromHtml((mValues.get(position).details).substring(0,99) + "...", Html.FROM_HTML_MODE_LEGACY));
             } else {
-                holder.mContentView.setText(Html.fromHtml(mValues.get(position).details));
+                holder.mContentView.setText(Html.fromHtml((mValues.get(position).details).substring(0,99) + "..."));
             }
+            // set image resource based on the document id - TODO: map the data to the corresponding resource
+            holder.mImageView.setImageResource(getResources().getIdentifier("image" + position , "drawable", getPackageName()));
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -123,15 +128,17 @@ public class ItemListActivity extends AppCompatActivity {
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public final View mView;
-            public final TextView mIdView;
+            public final TextView mTitleView;
             public final TextView mContentView;
+            public final ImageView mImageView;
             public DocumentItem mItem;
 
             public ViewHolder(View view) {
                 super(view);
                 mView = view;
-                mIdView = (TextView) view.findViewById(R.id.title);
+                mTitleView = (TextView) view.findViewById(R.id.title);
                 mContentView = (TextView) view.findViewById(R.id.content);
+                mImageView = (ImageView) view.findViewById(R.id.list_item_img);
             }
 
             @Override
