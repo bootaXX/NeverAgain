@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">NeverAgain</string>
     <string name="title_item_detail">Item Detail</string>
+
+    <string name="facebook_app_id">573715819494820</string>
+    <!--<string name="facebook_app_id">573739732825762</string> // for testing-->
+    <string name="action_share">Share</string>
 </resources>

@@ -7,12 +7,17 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,9 +26,22 @@ import android.widget.TextView;
 
 import com.djmaraat.apps.neveragain.helpers.Utilities;
 import com.djmaraat.apps.neveragain.entities.DocumentItem;
+import com.facebook.AccessToken;
+import com.facebook.FacebookRequestError;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.Profile;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.share.ShareApi;
+import com.facebook.share.model.ShareLinkContent;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * An activity representing a list of Items. This activity
@@ -39,6 +57,14 @@ public class ItemListActivity extends AppCompatActivity {
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
+
+    // Constants to be used when sharing message on facebook time line.
+    private static final int FACEBOOK_ERROR_PERMISSION = 200;
+    private static final String PARAM_EXPLICIT = "fb:explicitly_shared";
+    private static final String PARAM_GRAPH_PATH = "/me/feed";
+    private static final String PARAM_MSG = "message";
+    private static final String PARAM_LINK = "link";
+
     private boolean mTwoPane;
     ArrayList<DocumentItem> documentItemArrayList;
 
@@ -46,6 +72,10 @@ public class ItemListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
+
+        // Initialize the SDK before executing any other operations,
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(getApplication());
 
         loadData();
 
@@ -59,6 +89,34 @@ public class ItemListActivity extends AppCompatActivity {
             // If this view is present, then the
             // activity should be in two-pane mode.
             mTwoPane = true;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu options from the res/menu/menu_catalog.xml file.
+        // This adds menu items to the app bar.
+        getMenuInflater().inflate(R.menu.menu_main_page, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_share:
+//                ShareLinkContent content = new ShareLinkContent.Builder()
+//                        .setContentUrl(Uri.parse("https://developers.facebook.com"))
+//                        .build();
+//                ShareApi.share(content, null);
+//                Log.d("LOGTEST", "shared? ");
+                shareUsingGraph();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
         }
     }
 
@@ -185,5 +243,56 @@ public class ItemListActivity extends AppCompatActivity {
                 mDivider.draw(canvas);
             }
         }
+    }
+
+    void shareUsingGraph() {
+
+        // Create the parameter for share.
+        final Bundle params = new Bundle();
+        params.putBoolean(PARAM_EXPLICIT, true);
+        params.putString(PARAM_LINK, "https://developers.facebook.com");
+
+        // If message is empty, only our link gets posted.
+        String message = "This is the test message to share";
+        if (!TextUtils.isEmpty(message))
+            params.putString(PARAM_MSG, message);
+
+        // Send the request via Graph API of facebook to post message on time line.
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+
+        new GraphRequest(accessToken, PARAM_GRAPH_PATH,
+                params, HttpMethod.POST, new GraphRequest.Callback() {
+            @Override
+            public void onCompleted(GraphResponse graphResponse) {
+
+                if (graphResponse.getError() == null) {
+                    // Success in posting on time line.
+                    Log.d("LOGTEST", "Success: " + graphResponse);
+                } else {
+                    FacebookRequestError error = graphResponse.getError();
+                    if (error.getErrorCode() == FACEBOOK_ERROR_PERMISSION)
+                        // Cancelled while asking permission, show msg
+                        Log.d("LOGTEST", "share permission stuff");
+                    else
+                        // Error occurred while posting message.
+                    Log.d("LOGTEST", "Error: " + error);
+                }
+            }
+        }).executeAsync();
+//        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+//        GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
+//
+//            @Override
+//            public void onCompleted(JSONObject object, GraphResponse response) {
+//                // Application code
+//                System.out.println("object>>" + object);
+//                System.out.println("response>>" + response.toString());
+//
+//                Log.d("LOGTEST", "object: " + object);
+//                Log.d("LOGTEST", "response: " + response.toString());
+//
+//            }
+//        });
+//        request.executeAsync();
     }
 }

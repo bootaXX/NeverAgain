@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.djmaraat.apps.neveragain">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -8,6 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <activity
             android:name=".ItemListActivity"
             android:label="@string/app_name">
@@ -15,6 +19,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <data android:scheme="sharesample" />
             </intent-filter>
         </activity>
         <activity
@@ -25,6 +30,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.djmaraat.apps.neveragain.ItemListActivity" />
         </activity>
+        <activity android:name="com.facebook.FacebookActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            tools:replace="android:theme"/>
+        <provider android:authorities="com.facebook.app.FacebookContentProvider573715819494820"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true" />
     </application>
-
 </manifest>
