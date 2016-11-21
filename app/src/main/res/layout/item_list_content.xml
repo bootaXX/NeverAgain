@@ -33,22 +33,20 @@
 
     <ImageView
         android:id="@+id/list_item_img"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginRight="16dp"
+        android:layout_width="150dp"
+        android:layout_height="170dp"
+        android:padding="5dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
+        android:background="@android:color/black"
         android:layout_gravity="center_vertical"
-        android:scaleType="centerCrop"/>
+        android:scaleType="fitCenter"/>
 
     <ImageView
         android:id="@+id/list_item_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_action_next_item"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
         android:layout_gravity="center_vertical"
-        android:scaleType="centerCrop"/>
+        android:scaleType="fitCenter"/>
 </LinearLayout>
