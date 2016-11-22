@@ -35,7 +35,7 @@ import java.util.ArrayList;
 public class Utilities {
     public static ArrayList<DocumentItem> loadJSONFromAsset(Context context) {
         ArrayList<DocumentItem> documentItemArrayList = new ArrayList<>();
-        String json = null;
+        String json;
         try {
             InputStream is = context.getAssets().open("data.json");
             int size = is.available();
@@ -49,11 +49,11 @@ public class Utilities {
         }
         try {
             JSONObject obj = new JSONObject(json);
-            JSONArray m_jArry = obj.getJSONArray("docus");
+            JSONArray docus = obj.getJSONArray("docus");
 
-            for (int i = 0; i < m_jArry.length(); i++) {
-                JSONObject jo_inside = m_jArry.getJSONObject(i);
-                DocumentItem documentItem = new DocumentItem(Integer.toString(jo_inside.optInt("_id")), jo_inside.optString("title"), jo_inside.optString("content"), jo_inside.optInt("_id"));
+            for (int i = 0; i < docus.length(); i++) {
+                JSONObject jdocuItem = docus.getJSONObject(i);
+                DocumentItem documentItem = new DocumentItem(Integer.toString(jdocuItem.optInt("_id")), jdocuItem.optString("title"), jdocuItem.optString("content"), jdocuItem.optInt("_id"));
 
                 //Add your values in your `ArrayList` as below:
                 documentItemArrayList.add(documentItem);
