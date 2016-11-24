@@ -44,9 +44,8 @@ public class ItemDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
 
     /**
-     * The dummy content this fragment is presenting.
+     * The DocumentItem content this fragment is presenting.
      */
-//    private DummyContent.DummyItem mItem;
 
     private DocumentItem mItem;
 
@@ -75,7 +74,7 @@ public class ItemDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.item_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
+        // Show the content as text in a TextView.
         if (mItem != null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 ((TextView) rootView.findViewById(R.id.item_detail)).setText(Html.fromHtml(mItem.details, Html.FROM_HTML_MODE_COMPACT));

@@ -58,13 +58,6 @@ public class ItemListActivity extends AppCompatActivity {
      * device.
      */
 
-    // Constants to be used when sharing message on facebook time line.
-    private static final int FACEBOOK_ERROR_PERMISSION = 200;
-    private static final String PARAM_EXPLICIT = "fb:explicitly_shared";
-    private static final String PARAM_GRAPH_PATH = "/me/feed";
-    private static final String PARAM_MSG = "message";
-    private static final String PARAM_LINK = "link";
-
     private boolean mTwoPane;
     ArrayList<DocumentItem> documentItemArrayList;
 
@@ -72,10 +65,6 @@ public class ItemListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
-
-        // Initialize the SDK before executing any other operations,
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(getApplication());
 
         loadData();
 
@@ -104,12 +93,6 @@ public class ItemListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_share:
-//                ShareLinkContent content = new ShareLinkContent.Builder()
-//                        .setContentUrl(Uri.parse("https://developers.facebook.com"))
-//                        .build();
-//                ShareApi.share(content, null);
-//                Log.d("LOGTEST", "shared? ");
-                shareUsingGraph();
                 return true;
 
             default:
@@ -243,56 +226,5 @@ public class ItemListActivity extends AppCompatActivity {
                 mDivider.draw(canvas);
             }
         }
-    }
-
-    void shareUsingGraph() {
-
-        // Create the parameter for share.
-        final Bundle params = new Bundle();
-        params.putBoolean(PARAM_EXPLICIT, true);
-        params.putString(PARAM_LINK, "https://developers.facebook.com");
-
-        // If message is empty, only our link gets posted.
-        String message = "This is the test message to share";
-        if (!TextUtils.isEmpty(message))
-            params.putString(PARAM_MSG, message);
-
-        // Send the request via Graph API of facebook to post message on time line.
-        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-
-        new GraphRequest(accessToken, PARAM_GRAPH_PATH,
-                params, HttpMethod.POST, new GraphRequest.Callback() {
-            @Override
-            public void onCompleted(GraphResponse graphResponse) {
-
-                if (graphResponse.getError() == null) {
-                    // Success in posting on time line.
-                    Log.d("LOGTEST", "Success: " + graphResponse);
-                } else {
-                    FacebookRequestError error = graphResponse.getError();
-                    if (error.getErrorCode() == FACEBOOK_ERROR_PERMISSION)
-                        // Cancelled while asking permission, show msg
-                        Log.d("LOGTEST", "share permission stuff");
-                    else
-                        // Error occurred while posting message.
-                    Log.d("LOGTEST", "Error: " + error);
-                }
-            }
-        }).executeAsync();
-//        AccessToken accessToken = AccessToken.getCurrentAccessToken();
-//        GraphRequest request = GraphRequest.newMeRequest(accessToken, new GraphRequest.GraphJSONObjectCallback() {
-//
-//            @Override
-//            public void onCompleted(JSONObject object, GraphResponse response) {
-//                // Application code
-//                System.out.println("object>>" + object);
-//                System.out.println("response>>" + response.toString());
-//
-//                Log.d("LOGTEST", "object: " + object);
-//                Log.d("LOGTEST", "response: " + response.toString());
-//
-//            }
-//        });
-//        request.executeAsync();
     }
 }
