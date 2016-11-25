@@ -26,16 +26,6 @@ import android.widget.TextView;
 
 import com.djmaraat.apps.neveragain.helpers.Utilities;
 import com.djmaraat.apps.neveragain.entities.DocumentItem;
-import com.facebook.AccessToken;
-import com.facebook.FacebookRequestError;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.Profile;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.share.ShareApi;
-import com.facebook.share.model.ShareLinkContent;
 
 import org.json.JSONObject;
 
